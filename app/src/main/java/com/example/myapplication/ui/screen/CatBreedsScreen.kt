@@ -22,8 +22,6 @@ import com.example.myapplication.viewmodel.CatViewModel
 @Composable
 fun CatBreedsScreen(viewModel: CatViewModel, navController: NavController) {
 
-
-
     when {
         viewModel.error != null -> Text("Ошибка: ${viewModel.error}")
 

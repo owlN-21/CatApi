@@ -10,11 +10,10 @@ interface CatDao {
     @Insert
     suspend fun insertAll(catEntities: List<CatEntity>)
 
-    @Query("SELECT * FROM cats")
-    suspend fun getAllCats(): Flow<List<CatEntity>>
+    @Query("SELECT * FROM cat_database")
+    fun getAllCats(): Flow<List<CatEntity>>
 
-    @Query("SELECT * FROM cats WHERE id = :id")
-    suspend fun getById(id: Int): Flow<CatEntity?>
-
+    @Query("SELECT * FROM cat_database WHERE id = :id")
+    fun getById(id: Int): Flow<CatEntity?>
 
 }

@@ -11,13 +11,17 @@ import androidx.lifecycle.viewModelScope
 import com.example.myapplication.data.model.CatImage
 import com.example.myapplication.data.model.CatInformation
 import com.example.myapplication.data.repository.CatRepository
-import com.example.myapplication.data.repository.CatRepositoryGet
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
-class CatViewModel : ViewModel() {
+@HiltViewModel
+class CatViewModel @Inject constructor(
+    private val repository: CatRepository
+) : ViewModel() {
 
-    private val repository = CatRepositoryGet()
 
     val catItems = mutableStateListOf<Pair<CatInformation, CatImage>>()
 
@@ -33,23 +37,17 @@ class CatViewModel : ViewModel() {
     init {
         loadCats()
     }
-
     private fun loadCats() {
         viewModelScope.launch {
             try {
-                val tempList = mutableListOf<Pair<CatInformation, CatImage>>()
-
-                for (breedId in breeds) {
-                    try {
-                        val info = repository.getCatInformation(breedId)
-                        val image =  repository.getCatImage(info.reference_image_id)
-                        tempList.add(info to image)
-                    } catch (e: Exception) {
-                        Log.e("CatViewModel", "Ошибка для $breedId: ${e.message}")
-                    }
+                repository.getCatBreeds().collect { entities ->
+                    catItems.clear()
+                    catItems.addAll(entities.map {
+                        val info = CatInformation(it.id, it.name, it.description, "")
+                        val image = CatImage(it.id, it.url)
+                        info to image
+                    })
                 }
-                catItems.clear()
-                catItems.addAll (tempList)
             } catch (e: Exception) {
                 error = e.message
                 Log.e("CatViewModel", "Ошибка загрузки списка: ${e.message}")
@@ -58,6 +56,7 @@ class CatViewModel : ViewModel() {
             }
         }
     }
+
 
     fun getCatInfoBy(id: String): CatInformation?{
         return catItems.find { it.first.id == id }?.first

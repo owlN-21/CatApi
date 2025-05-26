@@ -23,7 +23,7 @@ fun AppNavigation(viewModel: CatViewModel) {
             arguments = listOf(navArgument("breedId") { type = NavType.StringType })
         ) { backStackEntry ->
             val breedId = backStackEntry.arguments?.getString("breedId") ?: return@composable
-            DetailScreen( breedId, viewModel)
+            DetailScreen( breedId, viewModel, navController)
         }
     }
 }

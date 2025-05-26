@@ -7,5 +7,5 @@ data class CatInformation(
     val id: String,
     val name: String,
     val description: String,
-    val reference_image_id: String
+    val reference_image_id: String?
 )
